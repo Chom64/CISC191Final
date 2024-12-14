@@ -2,6 +2,18 @@ import javax.sound.sampled.*;
 import java.io.File;
 import java.io.IOException;
 
+/**
+ * Lead Author(s):
+ * 
+ * @Zhao Chen
+ * @Christopher Hom
+ * 
+ * Version/date: 12-12-2024
+ * 
+ * Responsibilities of class: 
+ * This class is responsible for handling sound effects, including background music 
+ * and click sounds.
+ */
 public class SoundManager {
 
     private Clip backgroundClip;  
