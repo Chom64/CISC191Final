@@ -6,6 +6,25 @@ import java.io.File;
 import java.awt.Image;
 import javax.swing.ImageIcon;
 
+/**
+ * Lead Author(s):
+ * 
+ * @Zhao Chen
+ * @Christopher Hom
+ *         <<add additional lead authors here, with a full first and last name>>
+ * 
+ * Other contributors:
+ *         <<add additional contributors (mentors, tutors, friends) here, with
+ *         contact information>>
+ * 
+ * 
+ * Version/date: 12-12-2024
+ * 
+ * Responsibilities of class: 
+ * ButtonCell class handles user interactions with individual cells on the game board.
+ * 
+ */ 
+
 public class ButtonCell extends MouseAdapter implements ActionListener {
     private GameBoard gameBoard;
     private JButton[][] buttons; // 2D array of buttons representing the cells
@@ -13,15 +32,32 @@ public class ButtonCell extends MouseAdapter implements ActionListener {
     private GameTimer gameTimer; // Timer for the game duration
     private boolean gameOver = false; // Flag to check if the game is over
     private SoundManager soundManager; // Handling sound effects
+    private String currentDifficulty;
 
-    public ButtonCell(GameBoard gameBoard, JButton[][] buttons, JLabel timerLabel, GameTimer gameTimer, SoundManager soundManager) {
+    /**
+     * Initializes the ButtonCell with necessary game components.
+     * 
+     * @param gameBoard Reference to the GameBoard object that handles game data.
+     * @param buttons 2D array of buttons representing the game grid.
+     * @param timerLabel JLabel to display the game timer.
+     * @param gameTimer Timer object to manage the game's time.
+     * @param soundManager SoundManager to play sound effects during gameplay.
+     */
+    public ButtonCell(GameBoard gameBoard, JButton[][] buttons, JLabel timerLabel, GameTimer gameTimer, SoundManager soundManager, String difficulty) {
         this.gameBoard = gameBoard;
         this.buttons = buttons;
         this.timerLabel = timerLabel;
         this.gameTimer = gameTimer;
         this.soundManager = soundManager;
+        this.currentDifficulty = difficulty;
     }
 
+    /**
+     * This method is invoked when a button is clicked (left-click).
+     * It reveals the corresponding cell, updates the button's UI, and checks for game-over or win conditions.
+     * 
+     * @param e ActionEvent triggered by the button click.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
         if (gameOver) return;
@@ -41,6 +77,7 @@ public class ButtonCell extends MouseAdapter implements ActionListener {
             }
         }
 
+        //game over check
         if (!gameBoard.isRevealed(row, col)) {
             gameBoard.revealCell(row, col);
             int value = gameBoard.getCellValue(row, col);
@@ -50,8 +87,8 @@ public class ButtonCell extends MouseAdapter implements ActionListener {
                 setMineImage(button);  // Set the mine image
                 button.setBackground(Color.RED);  // Set red background for mines
                 gameOver = true;
-                JOptionPane.showMessageDialog(null, "Game Over! You hit a mine.");
                 gameTimer.stop();
+                JOptionPane.showMessageDialog(null, "Game Over! You hit a mine.");
                 return;
             }
 
@@ -66,17 +103,17 @@ public class ButtonCell extends MouseAdapter implements ActionListener {
 
             // Check if the game is won
             if (gameBoard.isGameOver()) {
-                JOptionPane.showMessageDialog(null, "Congratulations! You won!");
-                gameTimer.stop();
+            	gameTimer.stop();
+            	JOptionPane.showMessageDialog(null, "Congratulations! You won!");                
                 gameOver = true;
 
                 String playerName = JOptionPane.showInputDialog("Enter your name:");
-                String difficulty = "Easy"; 
+                
                 
                 if (playerName != null && !playerName.trim().isEmpty()) {
                     Leaderboard leaderboard = new Leaderboard();
-                    leaderboard.addEntry(playerName, gameTimer.getTimeElapsed(), difficulty);
-                    leaderboard.displayLeaderboard();
+                    leaderboard.addEntry(playerName, gameTimer.getTimeElapsed(), currentDifficulty);
+                    leaderboard.displayLeaderboard(currentDifficulty);
                 }
             }
 
@@ -84,6 +121,12 @@ public class ButtonCell extends MouseAdapter implements ActionListener {
         }
     }
 
+    /**
+     * This method is invoked when the mouse is pressed.
+     * It flags the cell with a "F" if it's not revealed, otherwise un-flags it.
+     * 
+     * @param e MouseEvent triggered by the mouse press.
+     */
     @Override
     public void mousePressed(MouseEvent e) {
         if (gameOver) return;
@@ -154,8 +197,11 @@ public class ButtonCell extends MouseAdapter implements ActionListener {
     }
 
 
-
-
+    /**
+     * Sets the mine image on the given button if the cell is a mine.
+     * 
+     * @param button The button representing the mine cell.
+     */
     private void setMineImage(JButton button) {
         File mineImageFile = new File("resources/images/mine.png");
         if (mineImageFile.exists()) {
