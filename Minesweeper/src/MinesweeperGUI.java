@@ -2,6 +2,16 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+/**
+ * Lead Author(s):
+ * 
+ * @Zhao Chen
+ * @Christopher Hom
+ * Version/date: 12-12-2024
+ * 
+ * Responsibilities of class: The MinesweeperGUI class is responsible for initializing and managing the graphical user
+ * interface (GUI) of the Minesweeper game.
+ */
 public class MinesweeperGUI {
     private JFrame frame;
     private JButton[][] buttons;
@@ -14,13 +24,14 @@ public class MinesweeperGUI {
 
     private JButton pauseButton;   // Button to pause music
     private JButton resumeButton;  // Button to resume music
+    private JLabel authorLabel;    // Label to display author information
     
     private JButton easyButton;
     private JButton mediumButton;
     private JButton hardButton;
 
     public MinesweeperGUI() {
-        // Initialize the frame
+    	// Initialize the frame
         frame = new JFrame("MineSweeper");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
@@ -48,7 +59,10 @@ public class MinesweeperGUI {
 
         // Initialize the game with default difficulty ("easy")
         setDifficulty("easy");
-        
+
+        // Create and add the bottom panel with difficulty and author information
+        createBottomPanel();
+
         // Show the frame
         frame.setVisible(true);
     }
@@ -115,7 +129,7 @@ public class MinesweeperGUI {
         resetUI();
 
         // Initialize the ButtonCell for event handling
-        buttonCell = new ButtonCell(gameBoard, buttons, timerLabel, gameTimer, soundManager);  // Pass soundManager to ButtonCell
+        buttonCell = new ButtonCell(gameBoard, buttons, timerLabel, gameTimer, soundManager, difficulty);  // Pass soundManager to ButtonCell
 
         // Add listeners to all buttons
         addListeners();
@@ -195,6 +209,33 @@ public class MinesweeperGUI {
         return controlPanel;
     }
 
+ // Create a panel to display the bottom controls (difficulty dropdown and author info)
+    private void createBottomPanel() {
+        // Create a panel for the bottom with FlowLayout (left for combo box, right for author info)
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+
+        // Add difficulty combo box to the left of the bottom panel
+        bottomPanel.add(new JLabel("Select Difficulty: "));
+        bottomPanel.add(easyButton);
+        bottomPanel.add(mediumButton);
+        bottomPanel.add(hardButton);
+
+        // Create a label for author information
+        authorLabel = new JLabel("Author: Zhao Chen, Christopher Hom", JLabel.CENTER);
+
+        // Create another panel for author info to be placed on the right
+        JPanel authorPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        authorPanel.add(authorLabel);
+
+        // Add both panels (difficulty and author) to the bottom section
+        JPanel southPanel = new JPanel(new BorderLayout());
+        southPanel.add(bottomPanel, BorderLayout.WEST);  // Place difficulty combo box on the left
+        southPanel.add(authorPanel, BorderLayout.EAST);  // Place author info on the right
+
+        // Add the south panel to the frame's SOUTH region
+        frame.add(southPanel, BorderLayout.SOUTH);
+    }
+    
     public static void main(String[] args) {
         new MinesweeperGUI();
     }
